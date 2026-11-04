@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dih-uat-dagster
+  namespace: openshift-gitops
+  annotations: { argocd.argoproj.io/sync-wave: "4" }
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/luckylucky2017/dih-gitops.git
+    targetRevision: main
+    path: charts/dagster
+    helm:
+      releaseName: dagster
+      valueFiles:
+      - ../../envs/uat/dagster/values.yaml
+      - ../../envs/uat/dagster/values-images.yaml
+  destination: { server: https://kubernetes.default.svc, namespace: dih-proc }
+  syncPolicy:
+    automated: { prune: false, selfHeal: true }

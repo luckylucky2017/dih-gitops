@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dih-uat-root
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/luckylucky2017/dih-gitops.git
+    targetRevision: main
+    path: apps/uat
+  destination: { server: https://kubernetes.default.svc, namespace: openshift-gitops }
+  syncPolicy:
+    automated: { prune: false, selfHeal: true }

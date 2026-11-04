@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dih-uat-dagster-auth
+  namespace: openshift-gitops
+  annotations: { argocd.argoproj.io/sync-wave: "5" }
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/luckylucky2017/dih-gitops.git
+    targetRevision: main
+    path: envs/uat/dagster-auth
+  destination: { server: https://kubernetes.default.svc, namespace: dih-proc }
+  syncPolicy:
+    automated: { prune: false, selfHeal: true }
