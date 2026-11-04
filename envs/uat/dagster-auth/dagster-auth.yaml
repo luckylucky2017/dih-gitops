@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: dagster-auth, namespace: dih-proc }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: dagster-auth } }
+  template:
+    metadata: { labels: { app: dagster-auth } }
+    spec:
+      imagePullSecrets: [{ name: harbor-pull }]
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - { key: kubernetes.io/hostname, operator: NotIn, values: ["worker-1.ocp.example.local"] }
+      containers:
+      - name: oauth2-proxy
+        image: harbor.ocp.example.local/mirror/quay.io/oauth2-proxy/oauth2-proxy:v7.15.5
+        args:
+        - --provider=keycloak-oidc
+        - --oidc-issuer-url=https://keycloak-uat-vcb.apps.ocp.example.local/realms/dih
+        - --client-id=dagster-proxy
+        - --redirect-url=https://dagster-uat.apps.ocp.example.local/oauth2/callback
+        - --upstream=http://dagster-dagster-webserver.dih-proc.svc:3000
+        - --http-address=0.0.0.0:4180
+        - --email-domain=*
+        - --cookie-secure=true
+        - --reverse-proxy=true
+        - --skip-provider-button=true
+        - --provider-ca-file=/etc/ca/ca.crt
+        envFrom: [{ secretRef: { name: dagster-auth } }]
+        ports: [{ containerPort: 4180 }]
+        readinessProbe: { httpGet: { path: /ping, port: 4180 } }
+        resources:
+          requests: { cpu: 50m, memory: 64Mi }
+          limits: { cpu: 500m, memory: 256Mi }
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities: { drop: [ALL] }
+        volumeMounts: [{ name: ca, mountPath: /etc/ca, readOnly: true }]
+      volumes: [{ name: ca, configMap: { name: keycloak-ca } }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: dagster-auth, namespace: dih-proc }
+spec:
+  selector: { app: dagster-auth }
+  ports: [{ port: 4180, targetPort: 4180 }]
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata: { name: dagster-uat, namespace: dih-proc }
+spec:
+  host: dagster-uat.apps.ocp.example.local
+  to: { kind: Service, name: dagster-auth }
+  port: { targetPort: 4180 }
+  tls: { termination: edge, insecureEdgeTerminationPolicy: Redirect }

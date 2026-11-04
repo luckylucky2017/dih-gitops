@@ -1,0 +1,14 @@
+image:
+  registry: harbor.ocp.example.local/mirror/ghcr.io
+  repository: kubeflow/spark-operator/controller
+  pullSecrets:
+    - name: harbor-pull
+controller:
+  podSecurityContext:
+    fsGroup: null
+webhook:
+  podSecurityContext:
+    fsGroup: null
+spark:
+  jobNamespaces:
+    - dih-proc

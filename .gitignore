@@ -1,0 +1,6 @@
+*.crt
+*.key
+*.pem
+*.license
+*-secret*.yaml
+.env

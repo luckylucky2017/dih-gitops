@@ -1,0 +1,39 @@
+imagePullSecrets:
+  - name: harbor-pull
+global:
+  postgresqlSecretName: dagster-postgresql-secret
+postgresql:
+  enabled: false
+  postgresqlHost: dih-pg-rw.dih-data.svc.cluster.local
+  postgresqlUsername: dagster
+  postgresqlDatabase: dagster
+  service:
+    port: 5432
+dagsterWebserver:
+  image:
+    repository: harbor.ocp.example.local/mirror/docker.io/dagster/dagster-k8s
+    tag: "1.13.28"
+  resources:
+    requests: { cpu: 200m, memory: 512Mi }
+dagsterDaemon:
+  image:
+    repository: harbor.ocp.example.local/mirror/docker.io/dagster/dagster-k8s
+    tag: "1.13.28"
+  resources:
+    requests: { cpu: 200m, memory: 512Mi }
+runLauncher:
+  type: K8sRunLauncher
+dagster-user-deployments:
+  enabled: true
+  imagePullSecrets:
+    - name: harbor-pull
+  deployments:
+    - name: dih-pipelines
+      image:
+        repository: harbor.ocp.example.local/mirror/dih/dagster-pipelines
+        tag: uat-005
+        pullPolicy: IfNotPresent
+      dagsterApiGrpcArgs: ["--package-name", "dih_pipelines"]
+      port: 3030
+      resources:
+        requests: { cpu: 200m, memory: 512Mi }
