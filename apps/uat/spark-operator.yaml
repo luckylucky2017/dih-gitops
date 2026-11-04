@@ -16,6 +16,7 @@ spec:
       - ../../envs/uat/spark-operator/values.yaml
   destination: { server: https://kubernetes.default.svc, namespace: spark-operator }
   syncPolicy:
+    automated: { prune: false, selfHeal: true }
     syncOptions:
     - ServerSideApply=true
     - RespectIgnoreDifferences=true
