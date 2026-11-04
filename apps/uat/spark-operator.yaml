@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dih-uat-spark-operator
+  namespace: openshift-gitops
+  annotations: { argocd.argoproj.io/sync-wave: "3" }
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/luckylucky2017/dih-gitops.git
+    targetRevision: main
+    path: charts/spark-operator
+    helm:
+      releaseName: spark-operator
+      valueFiles:
+      - ../../envs/uat/spark-operator/values.yaml
+  destination: { server: https://kubernetes.default.svc, namespace: spark-operator }
+  syncPolicy:
+    syncOptions:
+    - ServerSideApply=true
+    - RespectIgnoreDifferences=true
+  ignoreDifferences:
+  - group: admissionregistration.k8s.io
+    kind: MutatingWebhookConfiguration
+    jqPathExpressions: ['.webhooks[]?.clientConfig.caBundle']
+  - group: admissionregistration.k8s.io
+    kind: ValidatingWebhookConfiguration
+    jqPathExpressions: ['.webhooks[]?.clientConfig.caBundle']
