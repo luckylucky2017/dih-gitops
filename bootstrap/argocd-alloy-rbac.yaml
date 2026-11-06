@@ -1,0 +1,21 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dih-alloy-log-reader
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "namespaces"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dih-alloy-log-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dih-alloy-log-reader
+subjects:
+  - kind: ServiceAccount
+    name: alloy
+    namespace: dih-obs
