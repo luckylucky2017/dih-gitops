@@ -13,6 +13,10 @@ admin: {existingSecret: grafana-admin, userKey: admin-user, passwordKey: admin-p
 resources:
   requests: {cpu: 100m, memory: 256Mi}
   limits: {memory: 512Mi}
+# Token đọc metrics của OCP (SA grafana-prom); Secret tạo tay, không nằm trong Git (mục 0.6)
+envValueFrom:
+  PROM_TOKEN:
+    secretKeyRef: {name: grafana-prom-token, key: token}
 grafana.ini:
   analytics: {reporting_enabled: false, check_for_updates: false, check_for_plugin_updates: false}
 datasources:
@@ -20,6 +24,19 @@ datasources:
     apiVersion: 1
     datasources:
       - name: Loki
+        uid: loki
         type: loki
         access: proxy
         url: http://loki.dih-obs.svc.cluster.local:3100
+      - name: Prometheus (OCP)
+        uid: prometheus-ocp
+        type: prometheus
+        access: proxy
+        isDefault: true
+        url: https://thanos-querier.openshift-monitoring.svc:9091
+        jsonData:
+          httpHeaderName1: Authorization
+          tlsSkipVerify: true      # lab; VCB: nạp service-CA
+          timeInterval: 30s
+        secureJsonData:
+          httpHeaderValue1: "Bearer ${PROM_TOKEN}"
