@@ -24,7 +24,6 @@ datasources:
     apiVersion: 1
     datasources:
       - name: Loki
-        uid: loki
         type: loki
         access: proxy
         url: http://loki.dih-obs.svc.cluster.local:3100
