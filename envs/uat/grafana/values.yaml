@@ -1,0 +1,25 @@
+image:
+  registry: harbor.ocp.example.local
+  repository: mirror/docker.io/grafana/grafana
+  tag: 13.3.0-distroless
+serviceAccount: {create: false, name: default}
+rbac: {create: false}
+testFramework: {enabled: false}
+initChownData: {enabled: false}
+deploymentStrategy: {type: Recreate}
+securityContext: {runAsUser: null, runAsGroup: null, fsGroup: null}
+persistence: {enabled: true, size: 2Gi, storageClassName: lvms-vg1}
+admin: {existingSecret: grafana-admin, userKey: admin-user, passwordKey: admin-password}
+resources:
+  requests: {cpu: 100m, memory: 256Mi}
+  limits: {memory: 512Mi}
+grafana.ini:
+  analytics: {reporting_enabled: false, check_for_updates: false, check_for_plugin_updates: false}
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Loki
+        type: loki
+        access: proxy
+        url: http://loki.dih-obs.svc.cluster.local:3100
