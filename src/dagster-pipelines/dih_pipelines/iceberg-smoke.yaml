@@ -1,0 +1,55 @@
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: iceberg-smoke
+  namespace: dih-proc
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  image: harbor.ocp.example.local/mirror/dih/spark-iceberg:4.0.5-ice1.12.0-py-oc1
+  imagePullSecrets: [harbor-pull]
+  mainApplicationFile: local:///opt/spark/app/smoke.py
+  sparkVersion: "4.0.5"
+  restartPolicy:
+    type: Never
+  volumes:
+    - name: app
+      configMap:
+        name: smoke-py
+  driver:
+    cores: 1
+    coreRequest: 200m
+    memory: 1g
+    serviceAccount: spark-operator-spark
+    volumeMounts:
+      - {name: app, mountPath: /opt/spark/app}
+    envFrom:
+      - secretRef: {name: s3-spark}
+    env:
+      - {name: SPARK_USER, value: spark}
+      - {name: AWS_REGION, value: us-east-1}
+      - name: ICEBERG_DB_USER
+        valueFrom: {secretKeyRef: {name: iceberg-db, key: username}}
+      - name: ICEBERG_DB_PASSWORD
+        valueFrom: {secretKeyRef: {name: iceberg-db, key: password}}
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      capabilities: {drop: [ALL]}
+      seccompProfile: {type: RuntimeDefault}
+  executor:
+    instances: 1
+    cores: 1
+    coreRequest: 200m
+    memory: 1g
+    envFrom:
+      - secretRef: {name: s3-spark}
+    env:
+      - {name: SPARK_USER, value: spark}
+      - {name: AWS_REGION, value: us-east-1}
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      capabilities: {drop: [ALL]}
+      seccompProfile: {type: RuntimeDefault}

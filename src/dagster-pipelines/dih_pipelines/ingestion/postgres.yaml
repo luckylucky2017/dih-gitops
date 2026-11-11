@@ -1,0 +1,24 @@
+source:
+  type: postgres
+  serviceName: dih-pg-lab
+  serviceConnection:
+    config:
+      type: Postgres
+      username: metadata_reader
+      authType:
+        password: ${PG_METADATA_PASSWORD}
+      hostPort: dih-pg-rw.dih-data.svc.cluster.local:5432
+      database: iceberg_catalog
+      ingestAllDatabases: false
+  sourceConfig:
+    config:
+      type: DatabaseMetadata
+sink:
+  type: metadata-rest
+  config: {}
+workflowConfig:
+  openMetadataServerConfig:
+    hostPort: http://openmetadata.dih-meta.svc.cluster.local:8585/api
+    authProvider: openmetadata
+    securityConfig:
+      jwtToken: ${OM_TOKEN}

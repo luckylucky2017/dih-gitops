@@ -1,0 +1,7 @@
+FROM harbor.ocp.example.local/mirror/docker.io/library/python:3.12.16-slim
+RUN pip install --no-cache-dir dagster==1.13.28 dagster-k8s==0.29.28 dagster-postgres==0.29.28 SQLAlchemy==2.0.55 kubernetes pyyaml 'openmetadata-ingestion[postgres]==2.0.7.2'
+ENV HOME=/opt/dih
+COPY dih_pipelines/ /opt/dih/dih_pipelines/
+WORKDIR /opt/dih
+RUN mkdir -p /opt/dagster/dagster_home && chgrp -R 0 /opt/dih /opt/dagster && chmod -R g=u /opt/dih /opt/dagster
+USER 1001
