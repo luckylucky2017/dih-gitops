@@ -12,3 +12,11 @@ Sau khi đẩy: đổi tag ở CẢ HAI file envs/uat/dagster/values.yaml (code 
 và envs/uat/dagster/values-images.yaml (pipelineRun.image.tag).
 
 Không để secret trong thư mục này: OM_TOKEN và PG_METADATA_PASSWORD lấy từ Secret của cụm.
+
+## Spark smoke (ConfigMap smoke-py)
+
+Mã nằm ở spark/smoke.py, không có trong ảnh. Tạo lại ConfigMap (idempotent):
+
+    oc -n dih-proc create configmap smoke-py \
+      --from-file=smoke.py=src/dagster-pipelines/spark/smoke.py \
+      --dry-run=client -o yaml | oc apply -f -
