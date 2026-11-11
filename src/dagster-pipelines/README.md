@@ -20,3 +20,19 @@ Mã nằm ở spark/smoke.py, không có trong ảnh. Tạo lại ConfigMap (ide
     oc -n dih-proc create configmap smoke-py \
       --from-file=smoke.py=src/dagster-pipelines/spark/smoke.py \
       --dry-run=client -o yaml | oc apply -f -
+
+## Build không cần Internet (wheelhouse, dùng cho air-gapped)
+
+PyPI từ helper đôi khi chập chờn (ReadTimeout), nên tải trước gói về thư mục ngoài Git:
+
+    BASE=harbor.ocp.example.local/mirror/docker.io/library/python:3.12.16-slim
+    podman run --rm --network=host -v /root/wheelhouse-uat007:/w:Z -v /root/pipcache:/root/.cache/pip:Z \
+      $BASE pip wheel --retries 10 --timeout 120 -w /w <đúng danh sách gói trong Containerfile> setuptools wheel
+
+Build từ thư mục đó, không có mạng:
+
+    podman build --network=none --build-arg PIP_ARGS="--no-index --find-links /wheels" \
+      -v /root/wheelhouse-uat007:/wheels:ro,Z -t <ảnh> -f Containerfile .
+
+Không truyền --build-arg thì Containerfile cài trực tiếp từ PyPI (có retries/timeout).
+Thư mục wheelhouse (khoảng 175 MB) KHÔNG đưa vào Git; ở VCB tạo nó từ mirror PyPI nội bộ.

@@ -31,7 +31,7 @@ dagster-user-deployments:
     - name: dih-pipelines
       image:
         repository: harbor.ocp.example.local/mirror/dih/dagster-pipelines
-        tag: uat-006
+        tag: uat-007
         pullPolicy: IfNotPresent
       dagsterApiGrpcArgs: ["--package-name", "dih_pipelines"]
       port: 3030
@@ -44,5 +44,20 @@ dagster-user-deployments:
         - name: PG_METADATA_PASSWORD
           valueFrom:
             secretKeyRef: {name: pg-metadata-reader, key: password}
+        - name: MONGO_HOST
+          value: mongo.ocp.example.local
+        - name: MONGO_USER
+          valueFrom:
+            secretKeyRef: {name: mongo-dih-rw, key: username}
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef: {name: mongo-dih-rw, key: password}
+      volumes:
+        - name: mongo-ca
+          configMap: {name: mongo-ca}
+      volumeMounts:
+        - name: mongo-ca
+          mountPath: /ca
+          readOnly: true
       resources:
         requests: { cpu: 200m, memory: 512Mi }

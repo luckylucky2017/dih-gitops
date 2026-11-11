@@ -2,6 +2,7 @@ from dagster import asset, Definitions
 
 from .spark_job import spark_iceberg_smoke
 from .catalog import openmetadata_ingest_postgres
+from .mongo_seed import mongo_seed_customers
 
 
 @asset(group_name="smoke")
@@ -10,4 +11,4 @@ def hello(context):
     return 1
 
 
-defs = Definitions(assets=[hello, spark_iceberg_smoke, openmetadata_ingest_postgres])
+defs = Definitions(assets=[hello, spark_iceberg_smoke, openmetadata_ingest_postgres, mongo_seed_customers])

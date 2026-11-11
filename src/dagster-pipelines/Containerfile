@@ -1,5 +1,6 @@
 FROM harbor.ocp.example.local/mirror/docker.io/library/python:3.12.16-slim
-RUN pip install --no-cache-dir dagster==1.13.28 dagster-k8s==0.29.28 dagster-postgres==0.29.28 SQLAlchemy==2.0.55 kubernetes pyyaml 'openmetadata-ingestion[postgres]==2.0.7.2'
+ARG PIP_ARGS="--retries 10 --timeout 60"
+RUN pip install --no-cache-dir $PIP_ARGS dagster==1.13.28 dagster-k8s==0.29.28 dagster-postgres==0.29.28 SQLAlchemy==2.0.55 kubernetes pyyaml 'openmetadata-ingestion[postgres]==2.0.7.2' pymongo==4.19.0
 ENV HOME=/opt/dih
 COPY dih_pipelines/ /opt/dih/dih_pipelines/
 WORKDIR /opt/dih

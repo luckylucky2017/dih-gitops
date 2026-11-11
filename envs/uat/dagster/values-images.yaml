@@ -10,7 +10,7 @@ busybox:
 pipelineRun:
   image:
     repository: harbor.ocp.example.local/mirror/dih/dagster-pipelines
-    tag: uat-006
+    tag: uat-007
     pullPolicy: IfNotPresent
 generatePostgresqlPasswordSecret: false
 telemetry:
