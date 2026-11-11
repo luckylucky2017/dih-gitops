@@ -1,0 +1,28 @@
+clusterName: opensearch
+fullnameOverride: opensearch
+nodeGroup: ""
+singleNode: true
+replicas: 1
+protocol: http
+image:
+  repository: harbor.ocp.example.local/mirror/docker.io/opensearchproject/opensearch
+  pullPolicy: IfNotPresent
+imagePullPolicy: IfNotPresent
+opensearchJavaOpts: "-Xmx768m -Xms768m"
+resources:
+  requests: {cpu: 200m, memory: 1536Mi}
+  limits: {memory: 2Gi}
+persistence:
+  enabled: true
+  enableInitChown: false      # init container chown chạy root, restricted-v2 từ chối
+  size: 10Gi
+  storageClass: lvms-vg1
+podSecurityContext: {fsGroup: null, runAsUser: null}
+securityContext: {runAsUser: null}
+securityConfig: {enabled: false}
+sysctlInit: {enabled: false}
+config:
+  opensearch.yml: |
+    plugins.security.disabled: true
+    indices.query.bool.max_clause_count: 4096
+    node.store.allow_mmap: false   # host chưa đặt vm.max_map_count=262144

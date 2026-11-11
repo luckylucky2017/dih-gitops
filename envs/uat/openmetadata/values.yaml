@@ -1,0 +1,28 @@
+replicaCount: 1
+image:
+  repository: harbor.ocp.example.local/mirror/docker.io/openmetadata/server
+  tag: "2.0.7"
+  pullPolicy: IfNotPresent
+resources:
+  requests: {cpu: 300m, memory: 1Gi}
+  limits: {memory: 1536Mi}
+extraEnvs:
+  - {name: OPENMETADATA_HEAP_OPTS, value: "-Xmx768m -Xms768m"}
+openmetadata:
+  config:
+    deployPipelinesConfig: {enabled: false}
+    reindexConfig: {enabled: false}
+    elasticsearch: {host: opensearch, searchType: opensearch, port: 9200, scheme: http}
+    database:
+      host: dih-pg-rw.dih-data.svc.cluster.local
+      port: 5432
+      driverClass: org.postgresql.Driver
+      dbScheme: postgresql
+      databaseName: openmetadata_db
+      auth:
+        username: openmetadata
+        password: {secretRef: openmetadata-db-secrets, secretKey: openmetadata-db-password}
+      maxSize: 20          # dih-pg dùng chung: giữ số kết nối thấp
+      minSize: 5
+      initialSize: 5
+    pipelineServiceClientConfig: {enabled: false}   # ingestion chạy bằng Dagster
