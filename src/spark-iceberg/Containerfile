@@ -1,0 +1,5 @@
+FROM harbor.ocp.example.local/mirror/dih/spark-iceberg:4.0.5-ice1.12.0-py-oc1
+USER root
+ARG PIP_ARGS="--retries 10 --timeout 60"
+RUN python3 -m pip install --no-cache-dir $PIP_ARGS pymongo==4.18.3
+USER 185
