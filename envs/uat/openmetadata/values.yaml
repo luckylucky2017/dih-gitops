@@ -26,3 +26,10 @@ openmetadata:
       minSize: 5
       initialSize: 5
     pipelineServiceClientConfig: {enabled: false}   # ingestion chạy bằng Dagster
+# restricted-v2 gán UID ngẫu nhiên, không ghi được /opt/openmetadata/logs trong ảnh
+extraVolumes:
+  - name: logs
+    emptyDir: {}
+extraVolumeMounts:
+  - name: logs
+    mountPath: /opt/openmetadata/logs
