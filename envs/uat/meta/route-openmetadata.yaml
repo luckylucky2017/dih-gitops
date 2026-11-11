@@ -1,0 +1,10 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: openmetadata
+  namespace: dih-meta
+spec:
+  host: openmetadata.apps.ocp.example.local
+  to: {kind: Service, name: openmetadata}
+  port: {targetPort: http}
+  tls: {termination: edge, insecureEdgeTerminationPolicy: Redirect}
