@@ -36,3 +36,13 @@ Build từ thư mục đó, không có mạng:
 
 Không truyền --build-arg thì Containerfile cài trực tiếp từ PyPI (có retries/timeout).
 Thư mục wheelhouse (khoảng 175 MB) KHÔNG đưa vào Git; ở VCB tạo nó từ mirror PyPI nội bộ.
+
+## Spark job MongoDB -> Iceberg (asset spark_mongo_to_iceberg)
+
+Mã job: spark/mongo_to_iceberg.py, đưa vào cụm qua ConfigMap mongo-iceberg-py (tạo tay, idempotent):
+
+    oc -n dih-proc create configmap mongo-iceberg-py \
+      --from-file=mongo_to_iceberg.py=src/dagster-pipelines/spark/mongo_to_iceberg.py \
+      --dry-run=client -o yaml | oc apply -f -
+
+Sửa spark/mongo_to_iceberg.py thì phải chạy lại lệnh trên. Ảnh Spark: src/spark-iceberg (py-oc2).

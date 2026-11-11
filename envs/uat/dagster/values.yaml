@@ -31,7 +31,7 @@ dagster-user-deployments:
     - name: dih-pipelines
       image:
         repository: harbor.ocp.example.local/mirror/dih/dagster-pipelines
-        tag: uat-007
+        tag: uat-008
         pullPolicy: IfNotPresent
       dagsterApiGrpcArgs: ["--package-name", "dih_pipelines"]
       port: 3030
