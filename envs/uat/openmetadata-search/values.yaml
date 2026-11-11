@@ -17,8 +17,14 @@ persistence:
   enableInitChown: false      # init container chown chạy root, restricted-v2 từ chối
   size: 10Gi
   storageClass: lvms-vg1
-podSecurityContext: {fsGroup: null, runAsUser: null}
-securityContext: {runAsUser: null}
+rbac:
+  create: true                  # tạo ServiceAccount "opensearch" để gắn SCC nonroot-v2
+podSecurityContext: {fsGroup: 1000, runAsUser: 1000}
+securityContext:
+  runAsUser: 1000
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  capabilities: {drop: [ALL]}
 securityConfig: {enabled: false}
 sysctlInit: {enabled: false}
 config:
