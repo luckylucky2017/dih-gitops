@@ -15,7 +15,7 @@ groups:
     annotations:
       summary: "Target {{ $labels.job }} ({{ $labels.instance }}) không scrape được"
   - alert: PrometheusNotIngestingSamples
-    expr: rate(prometheus_tsdb_head_samples_appended_total[5m]) <= 0
+    expr: sum by (namespace, pod) (rate(prometheus_tsdb_head_samples_appended_total[5m])) <= 0
     for: 10m
     labels: { severity: critical }
     annotations:
