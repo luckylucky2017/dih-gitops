@@ -1,0 +1,81 @@
+# Bản chụp phiên bản - 2026-11-13 14:45 +07
+## Git
+12aebda Grafana: provision DIH dashboards from ConfigMap (offline)
+## OpenShift
+4.20.42
+NAME                         KUBELET    OS                                                      KERNEL                          CRIO                                         IP
+master-1.ocp.example.local   v1.33.13   Red Hat Enterprise Linux CoreOS 9.6.20261002-0 (Plow)   5.14.0-570.147.1.el9_6.x86_64   cri-o://1.33.13-8.rhaos4.20.gitd6a41c4.el9   10.1.67.195
+master-2.ocp.example.local   v1.33.13   Red Hat Enterprise Linux CoreOS 9.6.20261002-0 (Plow)   5.14.0-570.147.1.el9_6.x86_64   cri-o://1.33.13-8.rhaos4.20.gitd6a41c4.el9   10.1.67.196
+master-3.ocp.example.local   v1.33.13   Red Hat Enterprise Linux CoreOS 9.6.20261002-0 (Plow)   5.14.0-570.147.1.el9_6.x86_64   cri-o://1.33.13-8.rhaos4.20.gitd6a41c4.el9   10.1.67.197
+worker-1.ocp.example.local   v1.33.13   Red Hat Enterprise Linux CoreOS 9.6.20261002-0 (Plow)   5.14.0-570.147.1.el9_6.x86_64   cri-o://1.33.13-8.rhaos4.20.gitd6a41c4.el9   10.1.67.201
+worker-2.ocp.example.local   v1.33.13   Red Hat Enterprise Linux CoreOS 9.6.20261002-0 (Plow)   5.14.0-570.147.1.el9_6.x86_64   cri-o://1.33.13-8.rhaos4.20.gitd6a41c4.el9   10.1.67.199
+worker-3.ocp.example.local   v1.33.13   Red Hat Enterprise Linux CoreOS 9.6.20261002-0 (Plow)   5.14.0-570.147.1.el9_6.x86_64   cri-o://1.33.13-8.rhaos4.20.gitd6a41c4.el9   10.1.67.200
+## CRD prometheus-operator (OCP)
+0.85.0
+## Operator OLM (tên, trạng thái)
+lvms-operator.v4.20.2 Succeeded
+openshift-gitops-operator.v1.22.2 Succeeded
+packageserver Succeeded
+## Helm release (tên ns chart appVersion)
+cnpg cnpg-system cloudnative-pg-0.29.1 1.30.1
+confluent-operator dih-confluent confluent-for-kubernetes-0.2038.1 3.4.0
+dagster dih-proc dagster-1.13.28 1.13.28
+spark-operator spark-operator spark-operator-2.5.2 2.5.2
+## Application ArgoCD (tên sync health revision)
+dih-uat-alerts Synced Healthy 12aebda
+dih-uat-alloy Synced Healthy 12aebda
+dih-uat-dagster Synced Healthy 12aebda
+dih-uat-dagster-auth Synced Healthy 12aebda
+dih-uat-dashboards Synced Healthy 12aebda
+dih-uat-fluent-bit Synced Healthy 12aebda
+dih-uat-grafana Synced Healthy 12aebda
+dih-uat-loki Synced Healthy 12aebda
+dih-uat-meta-routes Synced Healthy 12aebda
+dih-uat-obs-routes Synced Healthy 12aebda
+dih-uat-openmetadata Synced Healthy 12aebda
+dih-uat-openmetadata-search Synced Healthy 12aebda
+dih-uat-opensearch-logs Synced Healthy 12aebda
+dih-uat-prometheus Synced Healthy 12aebda
+dih-uat-root Synced Healthy 12aebda
+dih-uat-spark-operator Synced Healthy 12aebda
+dih-uat-thanos Synced Healthy 12aebda
+## Image đang chạy (image | digest | namespace) - dih-* và cnpg-system
+harbor.ocp.example.local/mirror/cr.fluentbit.io/fluent/fluent-bit:5.1.3 | sha256:07bd53748518 | dih-obs
+harbor.ocp.example.local/mirror/dih/dagster-pipelines:uat-008 | sha256:2f627dc86e61 | dih-proc
+harbor.ocp.example.local/mirror/docker.io/dagster/dagster-k8s:1.13.28 | sha256:1d6ddbc72e17 | dih-proc
+harbor.ocp.example.local/mirror/docker.io/grafana/alloy:v1.21.3 | sha256:5ed61e8ab102 | dih-obs
+harbor.ocp.example.local/mirror/docker.io/grafana/grafana:13.3.0-distroless | sha256:540b8afb775b | dih-obs
+harbor.ocp.example.local/mirror/docker.io/grafana/loki:3.7.9 | sha256:0db216b630ae | dih-obs
+harbor.ocp.example.local/mirror/docker.io/library/busybox:1.28 | sha256:141c253bc4c3 | dih-proc
+harbor.ocp.example.local/mirror/docker.io/library/postgres:14.6 | sha256:50befbf8d190 | dih-proc
+harbor.ocp.example.local/mirror/docker.io/openmetadata/server:2.0.7 | sha256:327cdd85b868 | dih-meta
+harbor.ocp.example.local/mirror/docker.io/openpolicyagent/opa:1.22.0-static | sha256:912130fa92f5 | dih-iam
+harbor.ocp.example.local/mirror/docker.io/opensearchproject/opensearch:3.5.0 | sha256:40dca91def91 | dih-meta,dih-obs
+harbor.ocp.example.local/mirror/ghcr.io/cloudnative-pg/cloudnative-pg:1.30.1 | sha256:b0f9805bd5f9 | cnpg-system,dih-data
+harbor.ocp.example.local/mirror/ghcr.io/cloudnative-pg/postgresql:17.11 | sha256:3751df220f3d | dih-data
+harbor.ocp.example.local/mirror/quay.io/keycloak/keycloak-operator:26.8.1 | sha256:05ce4b9e632c | dih-iam
+harbor.ocp.example.local/mirror/quay.io/keycloak/keycloak:26.8.1 | sha256:de6ed510b59c | dih-iam
+harbor.ocp.example.local/mirror/quay.io/oauth2-proxy/oauth2-proxy:v7.15.5 | sha256:0d989b27d90d | dih-proc
+harbor.ocp.example.local/mirror/quay.io/prometheus-operator/prometheus-config-reloader:v0.85.0 | sha256:e8834beedbd7 | dih-obs
+harbor.ocp.example.local/mirror/quay.io/prometheus-operator/prometheus-config-reloader:v0.94.2 | sha256:a1897c67478b | dih-obs
+harbor.ocp.example.local/mirror/quay.io/prometheus-operator/prometheus-operator:v0.85.0 | sha256:890b3bb05cf4 | dih-obs
+harbor.ocp.example.local/mirror/quay.io/prometheus/alertmanager:v0.28.1 | sha256:220da6995a91 | dih-obs
+harbor.ocp.example.local/mirror/quay.io/prometheus/prometheus:v3.6.0 | sha256:76947e7ef22f | dih-obs
+harbor.ocp.example.local/mirror/quay.io/thanos/thanos:v0.39.2 | sha256:1d022ef4b8ef | dih-obs
+## Helper
+Red Hat Enterprise Linux release 9.8 (Plow)
+5.14.0-570.12.1.el9_6.x86_64
+Client Version: 4.20.42
+Kustomize Version: v5.6.0
+v3.16.4+g7877b45
+podman version 5.8.2
+skopeo version 1.22.2 commit: 1b99ecdfc8abd42ed57f1c9263c130e020ce98fc
+go version go1.27.3 (Red Hat 1.27.3-1.el9_9) linux/amd64
+mc version DEVELOPMENT.GOGET (commit-id=DEVELOPMENT.GOGET)
+Dnsmasq version 2.85  Copyright (c) 2000-2021 Simon Kelley
+HAProxy version 2.8.14-c23fe91 2025/01/29 - https://haproxy.org/
+minio-lab docker.io/pgsty/minio:RELEASE.2026-08-04T00-00-00Z-amd64
+## Harbor
+harbor None
+## VM MongoDB 10.1.67.194
+root@10.1.67.194: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).
