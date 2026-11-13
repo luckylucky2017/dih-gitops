@@ -1,0 +1,20 @@
+image:
+  registry: harbor.ocp.example.local
+  repository: mirror/quay.io/thanos/thanos
+  tag: v0.39.2
+  pullPolicy: IfNotPresent
+objstoreSecret: { name: thanos-objstore, key: objstore.yml }
+storageClass: lvms-vg1
+sidecarEndpoint: dnssrv+_grpc._tcp.prometheus-operated.dih-obs.svc.cluster.local
+query:
+  replicas: 1
+  resources: { requests: { cpu: 100m, memory: 256Mi }, limits: { memory: 1Gi } }
+store:
+  storage: 5Gi
+  resources: { requests: { cpu: 100m, memory: 256Mi }, limits: { memory: 1Gi } }
+compactor:
+  storage: 10Gi
+  retentionRaw: 30d
+  retention5m: 90d
+  retention1h: 365d
+  resources: { requests: { cpu: 100m, memory: 256Mi }, limits: { memory: 1Gi } }
