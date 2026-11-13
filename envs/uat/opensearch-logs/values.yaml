@@ -1,0 +1,35 @@
+# OpenSearch cho LOG (tách riêng khỏi OpenMetadata) - WBS A.3.8
+clusterName: opensearch-logs
+fullnameOverride: opensearch-logs
+nodeGroup: ""
+singleNode: true
+replicas: 1
+protocol: http
+image:
+  repository: harbor.ocp.example.local/mirror/docker.io/opensearchproject/opensearch
+  pullPolicy: IfNotPresent
+imagePullPolicy: IfNotPresent
+opensearchJavaOpts: "-Xmx1g -Xms1g"
+resources:
+  requests: {cpu: 200m, memory: 2Gi}
+  limits: {memory: 3Gi}
+persistence:
+  enabled: true
+  enableInitChown: false      # init container chown chạy root, restricted-v2 từ chối
+  size: 20Gi
+  storageClass: lvms-vg1
+rbac:
+  create: true                  # tạo ServiceAccount để gắn SCC nonroot-v2 (áp tay)
+podSecurityContext: {fsGroup: 1000, runAsUser: 1000, seccompProfile: {type: RuntimeDefault}}
+securityContext:
+  runAsUser: 1000
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  capabilities: {drop: [ALL]}
+securityConfig: {enabled: false}
+sysctlInit: {enabled: false}
+config:
+  opensearch.yml: |
+    plugins.security.disabled: true
+    indices.query.bool.max_clause_count: 4096
+    node.store.allow_mmap: false   # host chưa đặt vm.max_map_count=262144
