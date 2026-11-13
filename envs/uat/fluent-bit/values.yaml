@@ -30,6 +30,7 @@ config:
         Name tail
         Path /var/log/containers/*_dih-*_*.log
         Exclude_Path /var/log/containers/fluent-bit-*
+        Exclude_Path /var/log/containers/fluent-bit-*
         multiline.parser cri
         Tag kube.*
         Mem_Buf_Limit 10MB
