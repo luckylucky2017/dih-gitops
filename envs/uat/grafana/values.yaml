@@ -27,6 +27,13 @@ datasources:
         type: loki
         access: proxy
         url: http://loki.dih-obs.svc.cluster.local:3100
+      - name: Prometheus (DIH - Thanos)
+        uid: prometheus-dih
+        type: prometheus
+        access: proxy
+        url: http://thanos-query.dih-obs.svc.cluster.local:9090
+        jsonData:
+          timeInterval: 30s
       - name: Prometheus (OCP)
         uid: prometheus-ocp
         type: prometheus
