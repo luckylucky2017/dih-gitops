@@ -46,3 +46,19 @@ datasources:
           timeInterval: 30s
         secureJsonData:
           httpHeaderValue1: "Bearer ${PROM_TOKEN}"
+
+# Dashboard nạp offline từ ConfigMap dih-dashboards (chart charts/dih-dashboards), không dùng sidecar
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: dih
+        orgId: 1
+        folder: DIH
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/dih
+dashboardsConfigMaps:
+  dih: dih-dashboards
