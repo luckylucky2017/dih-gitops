@@ -1,0 +1,5 @@
+apiVersion: v2
+name: dih-dashboards
+description: Dashboard Grafana cho DIH (nạp qua ConfigMap, không cần Internet)
+type: application
+version: 0.1.0

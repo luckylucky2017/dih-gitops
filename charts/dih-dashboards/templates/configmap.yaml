@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dih-dashboards
+  labels:
+    app.kubernetes.io/part-of: dih-monitoring
+data:
+{{- range $path, $_ := .Files.Glob "files/*.json" }}
+  {{ base $path }}: |-
+{{ $.Files.Get $path | indent 4 }}
+{{- end }}
