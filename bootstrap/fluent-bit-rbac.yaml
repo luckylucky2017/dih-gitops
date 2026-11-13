@@ -1,0 +1,43 @@
+# Cluster-scoped RBAC cho Fluent Bit (ArgoCD namespaced không tạo được) -> áp tay: oc apply -f bootstrap/fluent-bit-rbac.yaml
+---
+# Source: fluent-bit/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fluent-bit
+  labels:
+    helm.sh/chart: fluent-bit-0.58.3
+    app.kubernetes.io/name: fluent-bit
+    app.kubernetes.io/instance: fluent-bit
+    app.kubernetes.io/version: "5.1.3"
+    app.kubernetes.io/managed-by: Helm
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+---
+# Source: fluent-bit/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: fluent-bit
+  labels:
+    helm.sh/chart: fluent-bit-0.58.3
+    app.kubernetes.io/name: fluent-bit
+    app.kubernetes.io/instance: fluent-bit
+    app.kubernetes.io/version: "5.1.3"
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: fluent-bit
+subjects:
+  - kind: ServiceAccount
+    name: fluent-bit
+    namespace: dih-obs

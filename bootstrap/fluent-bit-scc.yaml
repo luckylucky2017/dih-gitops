@@ -1,0 +1,24 @@
+# SCC riêng cho Fluent Bit (cluster-scoped, áp tay 1 lần). Không privileged, bỏ mọi capability.
+# Cần: hostPath (/var/log), chạy root (đọc log CRI-O), SELinux spc_t (đọc container_log_t).
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: dih-log-collector
+allowHostDirVolumePlugin: true
+allowHostIPC: false
+allowHostNetwork: false
+allowHostPID: false
+allowHostPorts: false
+allowPrivilegedContainer: false
+allowPrivilegeEscalation: false
+allowedCapabilities: []
+requiredDropCapabilities: [ALL]
+readOnlyRootFilesystem: false
+runAsUser: { type: RunAsAny }
+seLinuxContext: { type: RunAsAny }
+fsGroup: { type: RunAsAny }
+supplementalGroups: { type: RunAsAny }
+seccompProfiles: [runtime/default]
+volumes: [configMap, downwardAPI, emptyDir, hostPath, projected, secret]
+users:
+- system:serviceaccount:dih-obs:fluent-bit
