@@ -1,0 +1,5 @@
+quay.io/prometheus/alertmanager:v0.28.1
+quay.io/prometheus-operator/prometheus-config-reloader:v0.85.0
+quay.io/prometheus-operator/prometheus-operator:v0.85.0
+quay.io/prometheus/prometheus:v3.6.0
+quay.io/thanos/thanos:v0.39.2
