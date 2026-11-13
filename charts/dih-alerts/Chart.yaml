@@ -1,0 +1,5 @@
+apiVersion: v2
+name: dih-alerts
+description: Rule cảnh báo mẫu cho stack giám sát DIH
+type: application
+version: 0.1.0

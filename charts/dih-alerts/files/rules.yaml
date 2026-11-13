@@ -1,0 +1,46 @@
+groups:
+- name: dih-watchdog
+  rules:
+  - alert: Watchdog
+    expr: vector(1)
+    labels: { severity: none }
+    annotations:
+      summary: Luôn kích hoạt để chứng minh đường Prometheus -> Alertmanager còn sống
+- name: dih-obs-stack
+  rules:
+  - alert: DIHTargetDown
+    expr: up == 0
+    for: 5m
+    labels: { severity: warning }
+    annotations:
+      summary: "Target {{ $labels.job }} ({{ $labels.instance }}) không scrape được"
+  - alert: PrometheusNotIngestingSamples
+    expr: rate(prometheus_tsdb_head_samples_appended_total[5m]) <= 0
+    for: 10m
+    labels: { severity: critical }
+    annotations:
+      summary: "Prometheus {{ $labels.pod }} không nhận mẫu dữ liệu nào"
+  - alert: ThanosSidecarPrometheusDown
+    expr: thanos_sidecar_prometheus_up == 0
+    for: 5m
+    labels: { severity: critical }
+    annotations:
+      summary: "Thanos sidecar {{ $labels.pod }} mất kết nối Prometheus"
+  - alert: ThanosObjectStoreErrors
+    expr: sum by (job, pod) (increase(thanos_objstore_bucket_operation_failures_total[10m])) > 0
+    for: 5m
+    labels: { severity: warning }
+    annotations:
+      summary: "{{ $labels.job }} ({{ $labels.pod }}) lỗi khi truy cập MinIO"
+  - alert: ThanosCompactorHalted
+    expr: thanos_compact_halted == 1
+    for: 5m
+    labels: { severity: critical }
+    annotations:
+      summary: "Thanos Compactor đã dừng do lỗi, cần kiểm tra thủ công"
+  - alert: AlertmanagerFailedToSend
+    expr: rate(alertmanager_notifications_failed_total[5m]) > 0
+    for: 5m
+    labels: { severity: warning }
+    annotations:
+      summary: "Alertmanager {{ $labels.pod }} gửi thông báo thất bại qua {{ $labels.integration }}"
