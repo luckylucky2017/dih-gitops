@@ -1,0 +1,90 @@
+# kube-prometheus-stack 77.14.0 - DIH UAT (air-gapped, 100% image từ Harbor)
+# Subchart đã cắt khỏi chart; stub bên dưới để template không bị nil.
+crds: { enabled: false }          # CRD dùng của OCP (prometheus-operator 0.85.0)
+grafana: { enabled: false }       # Grafana cài riêng (apps/uat/grafana.yaml)
+kubeStateMetrics: { enabled: false }
+nodeExporter: { enabled: false }
+windowsMonitoring: { enabled: false }
+prometheus-node-exporter: { enabled: false, kubeRBACProxy: { enabled: false } }
+kube-state-metrics: { enabled: false, kubeRBACProxy: { enabled: false } }
+prometheus-windows-exporter: { enabled: false }
+defaultRules: { create: false }   # rule mẫu DIH thêm riêng (bước 1.4)
+
+# Không dùng ServiceMonitor mặc định của thành phần lõi OCP (OCP có stack riêng)
+kubeApiServer: { enabled: false }
+kubelet: { enabled: false }
+kubeControllerManager: { enabled: false }
+kubeScheduler: { enabled: false }
+kubeProxy: { enabled: false }
+kubeEtcd: { enabled: false }
+coreDns: { enabled: false }
+kubeDns: { enabled: false }
+
+prometheusOperator:
+  image:
+    registry: harbor.ocp.example.local
+    repository: mirror/quay.io/prometheus-operator/prometheus-operator
+    tag: v0.85.0
+  prometheusConfigReloader:
+    image:
+      registry: harbor.ocp.example.local
+      repository: mirror/quay.io/prometheus-operator/prometheus-config-reloader
+      tag: v0.85.0
+  thanosImage:
+    registry: harbor.ocp.example.local
+    repository: mirror/quay.io/thanos/thanos
+    tag: v0.39.2
+  admissionWebhooks: { enabled: false }
+  tls: { enabled: false }
+  kubeletService: { enabled: false }
+  # Chỉ quản lý các namespace DIH, không đụng openshift-monitoring
+  namespaces:
+    releaseNamespace: true
+    additional: [dih-meta, dih-proc, dih-data, dih-iam]
+  securityContext: { runAsUser: null, runAsGroup: null, fsGroup: null }
+
+alertmanager:
+  alertmanagerSpec:
+    replicas: 1
+    image:
+      registry: harbor.ocp.example.local
+      repository: mirror/quay.io/prometheus/alertmanager
+      tag: v0.28.1
+    securityContext: { runAsUser: null, runAsGroup: null, fsGroup: null }
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: lvms-vg1
+          accessModes: [ReadWriteOnce]
+          resources: { requests: { storage: 1Gi } }
+
+prometheus:
+  prometheusSpec:
+    replicas: 1
+    image:
+      registry: harbor.ocp.example.local
+      repository: mirror/quay.io/prometheus/prometheus
+      tag: v3.6.0
+    securityContext: { runAsUser: null, runAsGroup: null, fsGroup: null }
+    externalLabels: { cluster: dih-uat }
+    retention: 12h                 # lưu dài hạn ở MinIO qua Thanos
+    disableCompaction: true        # Thanos Compactor lo việc nén (bắt buộc khi dùng sidecar upload)
+    # Chọn mọi ServiceMonitor/PodMonitor/PrometheusRule trong các namespace được quản lý
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    thanos:
+      objectStorageConfig:
+        existingSecret: { name: thanos-objstore, key: objstore.yml }
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: lvms-vg1
+          accessModes: [ReadWriteOnce]
+          resources: { requests: { storage: 20Gi } }
+
+# RBAC cluster-scope áp tay từ bootstrap/prometheus-rbac.yaml (ArgoCD namespaced không tạo được)
+global:
+  rbac:
+    create: false
